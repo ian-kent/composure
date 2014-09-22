@@ -42,7 +42,7 @@ func TestGetResource(t *testing.T) {
 	})
 
 	Convey("GetResource returns correct URL resource", t, func() {
-		comp := cmp.NewComponent("URL", []interface{}{"http://localhost:15677"}, []interface{}{})
+		comp := cmp.NewComponent("HTTP", []interface{}{"http://localhost:15677"}, []interface{}{})
 		res, err := comp.GetResource(req)
 		So(err, ShouldBeNil)
 		So(res, ShouldNotBeNil)
@@ -64,22 +64,22 @@ func TestGetResource(t *testing.T) {
 		So(string(bytes), ShouldEqual, "Bar")
 	})
 
-	Convey("getURLResource should return an error for missing params", t, func() {
-		comp := cmp.NewComponent("URL", []interface{}{}, []interface{}{})
+	Convey("getHTTPResource should return an error for missing params", t, func() {
+		comp := cmp.NewComponent("HTTP", []interface{}{}, []interface{}{})
 		res, err := comp.GetResource(req)
 		So(res, ShouldBeNil)
 		So(err, ShouldNotBeNil)
-		So(err.Error(), ShouldEqual, "Missing parameter for URL resource")
+		So(err.Error(), ShouldEqual, "Missing parameter for HTTP resource")
 
-		comp = cmp.NewComponent("URL", []interface{}{map[string]interface{}{}}, []interface{}{})
+		comp = cmp.NewComponent("HTTP", []interface{}{map[string]interface{}{}}, []interface{}{})
 		res, err = comp.GetResource(req)
 		So(res, ShouldBeNil)
 		So(err, ShouldNotBeNil)
-		So(err.Error(), ShouldEqual, "Missing URL parameter for complex URL resource")
+		So(err.Error(), ShouldEqual, "Missing URL parameter for complex HTTP resource")
 	})
 
-	Convey("getURLResource should return a result for complex URL type", t, func() {
-		comp := cmp.NewComponent("URL", []interface{}{map[string]interface{}{"URL": "http://localhost:15677"}}, []interface{}{})
+	Convey("getHTTPResource should return a result for complex HTTP type", t, func() {
+		comp := cmp.NewComponent("HTTP", []interface{}{map[string]interface{}{"URL": "http://localhost:15677"}}, []interface{}{})
 		res, err := comp.GetResource(req)
 		So(err, ShouldBeNil)
 		So(res, ShouldNotBeNil)
@@ -89,8 +89,8 @@ func TestGetResource(t *testing.T) {
 		So(string(bytes), ShouldEqual, "Bar")
 	})
 
-	Convey("getURLResource should return an error for an invalid URL", t, func() {
-		comp := cmp.NewComponent("URL", []interface{}{"foobar://cant.exist"}, []interface{}{})
+	Convey("getHTTPResource should return an error for an invalid URL", t, func() {
+		comp := cmp.NewComponent("HTTP", []interface{}{"foobar://cant.exist"}, []interface{}{})
 		res, err := comp.GetResource(req)
 		So(res, ShouldBeNil)
 		So(err, ShouldNotBeNil)

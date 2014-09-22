@@ -65,29 +65,29 @@ It uses the following configuration:
 {
   "/": {
     "Template": {
-      "Type": "URL",
+      "Type": "HTTP",
       "Request": [ "http://templates.foobar/index.tmpl" ]
     },
     "Components": {
       "Header": {
-        "Type": "URL",
+        "Type": "HTTP",
         "Request": [ "http://header.foobar" ]
       },
       "Navbar": {
-        "Type": "URL",
+        "Type": "HTTP",
         "Request": [ "http://navbar.foobar" ]
       },
       "Content": {
-        "Type": "URL",
+        "Type": "HTTP",
         "Request": [ "http://newsfeed.foobar" ]
       },
       "Footer": {
-        "Type": "URL",
+        "Type": "HTTP",
         "Request": [ "http://footer.foobar" ]
       },
     },
     "Preflight": {
-      "Type": "URL",
+      "Type": "HTTP",
       "Request": [{
         "URL": "http://authentication.foobar/preflight",
         "Method": "GET",
@@ -107,7 +107,7 @@ It uses the following configuration:
       }]
     },
     "Postflight": {
-      "Type": "URL",
+      "Type": "HTTP",
       "Response": [{
         "Headers": {
           "$SET": {
@@ -192,20 +192,20 @@ A component is a JSON object specifying a `Type`:
 
 Additional items are passed to the component:
 
-* URL - loads the specified URL (see below)
+* HTTP - requests a HTTP resource, or modifies the existing one
 * Text - uses the raw text in `Value`
 * Composition - renders composition named in `Name` from this composure
 
 #### HTTP requests and responses
 
-The URL component type supports simple requests and complex requests:
+The HTTP component type supports simple and complex requests:
 
 The simple form takes a single string argument, generating a GET request
 which inherits the original request properties (e.g. query string and headers).
 
 ```json
 "Content": {
-  "Type": "URL",
+  "Type": "HTTP",
   "Request": [ "http://localhost:9000" ]
 }
 ```
@@ -214,7 +214,7 @@ The complex form takes a JSON object, allowing custom request and response handl
 
 ```json
 "Content": {
-  "Type": "URL",
+  "Type": "HTTP",
   "Request": [{
     "URL": "http://localhost:9000",
     "Method": "GET",

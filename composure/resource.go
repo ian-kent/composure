@@ -17,8 +17,8 @@ func (c *Component) GetResource(req *http.Request) (*Resource, error) {
 	switch c.Type {
 	case "Text":
 		return c.getTextResource(req, c.Value)
-	case "URL":
-		return c.getURLResource(req, c.Request)
+	case "HTTP":
+		return c.getHTTPResource(req, c.Request)
 	case "Composition":
 		return c.getCompositionResource(req, c.Name)
 	default:
@@ -32,9 +32,9 @@ func (c *Component) getTextResource(req *http.Request, text string) (*Resource, 
 	return &Resource{txt, nil}, nil
 }
 
-func (c *Component) getURLResource(req *http.Request, params []interface{}) (*Resource, error) {
+func (c *Component) getHTTPResource(req *http.Request, params []interface{}) (*Resource, error) {
 	if len(params) < 1 {
-		return nil, errors.New("Missing parameter for URL resource")
+		return nil, errors.New("Missing parameter for HTTP resource")
 	}
 
 	var url string
@@ -45,7 +45,7 @@ func (c *Component) getURLResource(req *http.Request, params []interface{}) (*Re
 	} else {
 		args = params[0].(map[string]interface{})
 		if _, ok := args["URL"].(string); !ok {
-			return nil, errors.New("Missing URL parameter for complex URL resource")
+			return nil, errors.New("Missing URL parameter for complex HTTP resource")
 		}
 		url = args["URL"].(string)
 	}

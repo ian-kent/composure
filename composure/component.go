@@ -38,6 +38,7 @@ func (c *Component) Execute(w http.ResponseWriter, req *http.Request) ([]byte, e
 		log.Println(err.Error())
 		//return b, err
 	}
+
 	c.Transform(w, req, c.Response, r)
 	if err != nil {
 		return b, err
