@@ -3,8 +3,10 @@ package composure
 import (
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 )
 
@@ -32,6 +34,19 @@ func (c *Component) getTextResource(req *http.Request) (*Resource, error) {
 	return &Resource{txt, nil}, nil
 }
 
+func ParseURL(url string, req *http.Request) string {
+	if strings.Contains(url, "{") {
+		re := regexp.MustCompile("{{\\s*([:]\\w+)\\s*}}")
+		url = re.ReplaceAllStringFunc(url, func(m string) string {
+			parts := re.FindStringSubmatch(m)
+			val := req.URL.Query().Get(parts[1])
+			return val
+		})
+	}
+	log.Println(url)
+	return url
+}
+
 func (c *Component) getHTTPResource(req *http.Request) (*Resource, error) {
 	if len(c.Request) < 1 {
 		return nil, errors.New("Missing parameter for HTTP resource")
@@ -49,6 +64,8 @@ func (c *Component) getHTTPResource(req *http.Request) (*Resource, error) {
 		}
 		url = args["URL"].(string)
 	}
+
+	url = ParseURL(url, req)
 
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {

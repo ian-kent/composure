@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -10,9 +11,25 @@ import (
 
 	"github.com/gorilla/pat"
 	"github.com/ian-kent/composure/composure"
+	"github.com/ian-kent/composure/context"
 )
 
 var comp *composure.Composure
+
+type proxyHandler struct {
+	Context *context.Context
+}
+
+func (ph proxyHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	cmp := comp.Get(ph.Context.Route)
+
+	if cmp == nil {
+		w.WriteHeader(404)
+		return
+	}
+
+	cmp.RenderFor(w, req)
+}
 
 func listen() {
 	gp := pat.New()
@@ -21,10 +38,10 @@ func listen() {
 		if strings.HasPrefix(route, "/") {
 			if len(r.Methods) > 0 {
 				for _, m := range r.Methods {
-					gp.Add(m, route, http.HandlerFunc(proxy))
+					gp.Add(m, route, proxyHandler{&context.Context{Method: m, Route: route}})
 				}
 			} else {
-				gp.Get(route, proxy)
+				gp.Add("GET", route, proxyHandler{&context.Context{Method: "GET", Route: route}})
 			}
 		}
 	}
@@ -33,17 +50,6 @@ func listen() {
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
-}
-
-func proxy(w http.ResponseWriter, req *http.Request) {
-	cmp := comp.Get(req.URL.Path)
-
-	if cmp == nil {
-		w.WriteHeader(404)
-		return
-	}
-
-	cmp.RenderFor(w, req)
 }
 
 func main() {
@@ -83,6 +89,10 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if spec == nil {
+		log.Fatal(errors.New("Error loading spec file"))
 	}
 
 	comp = spec

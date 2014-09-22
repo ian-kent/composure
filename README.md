@@ -144,6 +144,16 @@ On a route composition, you can optionally specify HTTP methods:
 
 If no methods are specified, GET is registered by default.
 
+#### Route placeholders
+
+Gorilla Pat routes can contain placeholders, e.g. `/product/{id}`.
+
+These are captured in query string parameters prefixed with a colon.
+
+For example, `id` becomes `:id`.
+
+These values can be used in later requests, e.g. to proxy an entire service.
+
 #### Composition
 
 Each child object is a "composition":
@@ -235,6 +245,15 @@ The complex form takes a JSON object, allowing custom request and response handl
       }
     }
   }]
+}
+```
+
+You can use placeholders in the request URL, for example:
+
+```json
+"/product/{id}": {
+  "Type": "HTTP",
+  "Request": [ "http://localhost:9000/products/view/{{:id}}" ]
 }
 ```
 

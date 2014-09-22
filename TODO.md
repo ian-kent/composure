@@ -1,8 +1,10 @@
 To-do
 =====
 
-- HTTP component URL placeholders, e.g. to proxy an entire node
 - Handle query parameters and request body
+- Clean up request/response rewriting
+  - Need to be able to move values, e.g. a query parameter to a header
+  - Maybe use Go templates?
 - Load template asynchronously, just defer rendering
 - Clean up documentation (particularly components and URL request/responses)
 - Consider lazy evaluation of components
@@ -21,4 +23,3 @@ To-do
 - Host matching for routes
 - Change default HTTP component behaviour
   - set $INHERIT for query and headers
-  - placeholders into URLs
