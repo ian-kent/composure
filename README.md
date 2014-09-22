@@ -2,6 +2,7 @@ Composure
 =========
 
 [![Build Status](https://travis-ci.org/ian-kent/composure.svg?branch=master)](https://travis-ci.org/ian-kent/composure)
+[![GoDoc](https://godoc.org/github.com/ian-kent/composure?status.svg)](http://godoc.org/github.com/ian-kent/composure)
 
 Composure is a lightweight server-side UI composition framework for building
 web applications with microservices.
