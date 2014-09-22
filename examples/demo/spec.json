@@ -1,0 +1,35 @@
+{
+  "/": {
+    "Methods": [ "GET" ],
+    "Template": {
+      "Type": "URL",
+      "Request": [ "https://gist.githubusercontent.com/ian-kent/ead9f381a2ff2463d9ef/raw/ce1a2e033ccf8e4804ba40fdd1412055ad0b95de/index.html" ]
+    },
+    "Postflight": {
+      "Type": "URL",
+      "Response": [{
+        "Headers": {
+          "$SET": {
+            "Server": "Composure"
+          }
+        }
+      }]
+    },
+    "Components": {
+      "Content": {
+        "Type": "URL",
+        "Request": [ "https://gist.githubusercontent.com/ian-kent/e1fc91a9e7263c0ba6aa/raw/605db6286b57c0bc926211d960be6aa907df43d8/composure.html" ]
+      },
+      "Navbar": {
+        "Type": "Composition",
+        "Name": "Navbar"
+      }
+    }
+  },
+  "Navbar": {
+    "Template": {
+      "Type": "URL",
+      "Request": [ "https://gist.githubusercontent.com/ian-kent/2126c4ddf82bb372be5f/raw/41e86eb2fdac1fd73e61364906595158cc0c7032/navbar.html" ]
+    }
+  }
+}
