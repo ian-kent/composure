@@ -3,6 +3,7 @@ package composure
 import (
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"sync"
 	"text/template"
 )
@@ -17,15 +18,26 @@ type Composition struct {
 }
 
 func (c *Composition) RenderFor(w http.ResponseWriter, req *http.Request) error {
+	rr := httptest.NewRecorder()
+	defer func() {
+		for k, v := range rr.Header() {
+			for _, v2 := range v {
+				w.Header().Add(k, v2)
+			}
+		}
+		w.WriteHeader(rr.Code)
+		w.Write(rr.Body.Bytes())
+	}()
+
 	if c.Preflight != nil {
 		// we don't care about the body content
-		_, err := c.Preflight.Execute(w, req)
+		_, err := c.Preflight.Execute(rr, req)
 		if err != nil {
 			return err
 		}
 	}
 
-	tmpl, err := c.Template.Execute(w, req)
+	tmpl, err := c.Template.Execute(rr, req)
 	if err != nil {
 		return err
 	}
@@ -43,7 +55,7 @@ func (c *Composition) RenderFor(w http.ResponseWriter, req *http.Request) error 
 			wg.Add(1)
 			go func(n string, p *Component) {
 				defer wg.Done()
-				b, err := p.Execute(w, req)
+				b, err := p.Execute(rr, req)
 				if err != nil {
 					// FIXME better error handling?
 					log.Fatal(err)
@@ -54,7 +66,7 @@ func (c *Composition) RenderFor(w http.ResponseWriter, req *http.Request) error 
 		wg.Wait()
 	}
 
-	err = t.Execute(w, args)
+	err = t.Execute(rr, args)
 
 	if err != nil {
 		return err
@@ -62,7 +74,7 @@ func (c *Composition) RenderFor(w http.ResponseWriter, req *http.Request) error 
 
 	if c.Postflight != nil {
 		// we don't care about the body content
-		_, err := c.Postflight.Execute(w, req)
+		_, err := c.Postflight.Execute(rr, req)
 		if err != nil {
 			return err
 		}

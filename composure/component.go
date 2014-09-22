@@ -39,18 +39,18 @@ func (c *Component) Execute(w http.ResponseWriter, req *http.Request) ([]byte, e
 		//return b, err
 	}
 
-	c.Transform(w, req, c.Response, r)
+	c.Transform(w, req, r)
 	if err != nil {
 		return b, err
 	}
 	return ioutil.ReadAll(io.Reader(r.Reader))
 }
 
-func (c *Component) Transform(w http.ResponseWriter, req *http.Request, response []interface{}, r *Resource) {
+func (c *Component) Transform(w http.ResponseWriter, req *http.Request, r *Resource) {
 	var args map[string]interface{}
 
-	if response != nil && len(response) > 0 {
-		if a, ok := response[0].(map[string]interface{}); ok {
+	if c.Response != nil && len(c.Response) > 0 {
+		if a, ok := c.Response[0].(map[string]interface{}); ok {
 			args = a
 		}
 	}

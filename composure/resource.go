@@ -16,34 +16,34 @@ type Resource struct {
 func (c *Component) GetResource(req *http.Request) (*Resource, error) {
 	switch c.Type {
 	case "Text":
-		return c.getTextResource(req, c.Value)
+		return c.getTextResource(req)
 	case "HTTP":
-		return c.getHTTPResource(req, c.Request)
+		return c.getHTTPResource(req)
 	case "Composition":
-		return c.getCompositionResource(req, c.Name)
+		return c.getCompositionResource(req)
 	default:
 		return nil, errors.New("Unrecognised resource type: " + c.Type)
 	}
 }
 
-func (c *Component) getTextResource(req *http.Request, text string) (*Resource, error) {
-	txt := strings.NewReader(text)
+func (c *Component) getTextResource(req *http.Request) (*Resource, error) {
+	txt := strings.NewReader(c.Value)
 
 	return &Resource{txt, nil}, nil
 }
 
-func (c *Component) getHTTPResource(req *http.Request, params []interface{}) (*Resource, error) {
-	if len(params) < 1 {
+func (c *Component) getHTTPResource(req *http.Request) (*Resource, error) {
+	if len(c.Request) < 1 {
 		return nil, errors.New("Missing parameter for HTTP resource")
 	}
 
 	var url string
 	var args map[string]interface{}
 
-	if s, ok := params[0].(string); ok {
+	if s, ok := c.Request[0].(string); ok {
 		url = s
 	} else {
-		args = params[0].(map[string]interface{})
+		args = c.Request[0].(map[string]interface{})
 		if _, ok := args["URL"].(string); !ok {
 			return nil, errors.New("Missing URL parameter for complex HTTP resource")
 		}
@@ -100,8 +100,8 @@ func (c *Component) getHTTPResource(req *http.Request, params []interface{}) (*R
 	return &Resource{res.Body, res}, nil
 }
 
-func (c *Component) getCompositionResource(req *http.Request, name string) (*Resource, error) {
-	r := c.composition.composure.Get(name)
+func (c *Component) getCompositionResource(req *http.Request) (*Resource, error) {
+	r := c.composition.composure.Get(c.Name)
 
 	if r == nil {
 		return nil, errors.New("Composition not found")
