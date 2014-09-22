@@ -57,6 +57,12 @@ func (c *Component) getHTTPResource(req *http.Request) (*Resource, error) {
 
 	if s, ok := c.Request[0].(string); ok {
 		url = s
+		args = map[string]interface{}{
+			"URL": s,
+			"Headers": map[string]interface{}{
+				"$INHERIT": "1",
+			},
+		}
 	} else {
 		args = c.Request[0].(map[string]interface{})
 		if _, ok := args["URL"].(string); !ok {

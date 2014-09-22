@@ -21,5 +21,3 @@ To-do
 - More spec demos (preflight, postflight, etc)
 - HTTP API for spec manipulation/reloading
 - Host matching for routes
-- Change default HTTP component behaviour
-  - set $INHERIT for query and headers
